@@ -1,13 +1,14 @@
 from django.urls import path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView,TokenVerifyView
-from .views import LoginView, ChangePasswordView, UserViewSet, RoleViewSet, FrontLoginView, GetCasLoginUrlView,CASCallbackView
+from .views import LoginView, ChangePasswordView, UserViewSet, RoleViewSet, FrontLoginView, GetCasLoginUrlView,CASCallbackView, DepartmentViewSet
 
 router = routers.DefaultRouter()
 
 # 注册用户管理ViewSet
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'roles', RoleViewSet, basename='roles')  # 角色API：/api/roles/
+router.register(r'departments', DepartmentViewSet, basename='departments')  # 部门API：/api/departments/
 
 urlpatterns = [
     # 认证相关URL

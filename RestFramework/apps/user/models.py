@@ -96,3 +96,28 @@ class UserInfo(AbstractBaseUser,PermissionsMixin):
         return self.is_active
 
 
+class Department(models.Model):
+    """部门字典表"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, unique=True, verbose_name="部门名称")  # 如：中文系
+    parent = models.ForeignKey(
+        'self', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL,
+        related_name='children',
+        verbose_name="上级部门"
+    )
+    order = models.IntegerField(default=0, verbose_name="排序")
+    is_active = models.BooleanField(default=True, verbose_name="是否启用")
+    description = models.CharField(max_length=300, null=True, blank=True, verbose_name="描述")
+        
+    class Meta:
+        db_table = 'department'
+        ordering = ['order', 'id']
+        verbose_name = "部门"
+        verbose_name_plural = "部门"
+    
+    def __str__(self):
+        return self.name
+

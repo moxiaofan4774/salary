@@ -94,6 +94,12 @@ const router = createRouter({
           component: () => import('@/views/system/salary/SalaryKouKuanAdmin.vue'),
           meta: { title: '扣款管理', closable: true, requiresAuth: true },
         },
+        {
+          path: '/departmentAdmin',
+          name: 'departmentAdmin',
+          component: () => import('@/views/system/user/DepartmentAdmin.vue'),
+          meta: { title: '部门管理', closable: true, requiresAuth: true },
+        },
        
       ]
     },

@@ -5,7 +5,8 @@
       "Bash(python:*)",
       "Bash(pip install:*)",
       "Bash(curl:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(xargs cat:*)"
     ],
     "deny": [],
     "ask": []

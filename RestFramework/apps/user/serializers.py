@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import UserInfo, Role
+from .models import UserInfo, Role, Department
 from apps.menu.serializers import MenuListSerializer
-from ..menu.models import Menu
+from apps.menu.models import Menu
 
 
 class UserSimpleSerializer(serializers.ModelSerializer):
@@ -131,4 +131,16 @@ class UserAdminSerializer(serializers.ModelSerializer):
         return instance
 
 
+class DepartmentSerializer(serializers.ModelSerializer):
+    parent_name = serializers.CharField(source='parent.name', read_only=True)
+    employee_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Department
+        fields = ['id', 'name', 'parent', 'parent_name', 'order', 
+                  'is_active', 'description', 'employee_count']
+    
+    def get_employee_count(self, obj):
+        # return obj.users.count()
+        return 0
 
