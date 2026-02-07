@@ -5,8 +5,8 @@ from rest_framework.views import APIView
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from .serializers import LoginSerializer, UserInfoSerializer, ChangePasswordSerializer, UserAdminSerializer, \
-    RoleSerializer, UserSimpleSerializer, FrontLoginSerializer
-from .models import UserInfo, Role
+    RoleSerializer, UserSimpleSerializer, FrontLoginSerializer, DepartmentSerializer
+from .models import UserInfo, Role, Department
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
@@ -21,6 +21,9 @@ from rest_framework import status  # 导入DRF的状态码常量
 from django_cas_ng.utils import get_cas_client
 from django_cas_ng import views
 from django.conf import settings
+from .filter import DepartmentFilter
+from rest_framework import permissions
+
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -481,3 +484,152 @@ class CASCallbackView(APIView):
             'user': UserInfoSerializer(user_login).data
         }
         return Response({'code': 200, 'message': '登录成功', 'data': data})
+
+
+class DepartmentViewSet(viewsets.ModelViewSet):
+    """部门视图集"""
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    pagination_class = MyPageNumberPagination
+    filterset_class = DepartmentFilter
+
+    def get_queryset(self):
+        """支持按名称、状态、上级部门过滤"""
+        queryset = Department.objects.select_related('parent').prefetch_related('children')
+
+        # 按名称搜索
+        name = self.request.query_params.get('name', None)
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        # 按状态过滤
+        is_active = self.request.query_params.get('is_active', None)
+        if is_active is not None:
+            # 将字符串转换为布尔值
+            is_active_bool = is_active.lower() in ['true', '1', 'yes']
+            queryset = queryset.filter(is_active=is_active_bool)
+
+        # 按上级部门过滤
+        parent_id = self.request.query_params.get('parent_id', None)
+        if parent_id:
+            queryset = queryset.filter(parent_id=parent_id)
+
+        return queryset.order_by('order', 'id')
+
+    @action(detail=True, methods=['post'], url_path='toggle_active')
+    def toggle_active(self, request, pk=None):
+        """切换部门启用状态"""
+        department = self.get_object()
+        department.is_active = not department.is_active
+        department.save()
+
+        status_text = "启用" if department.is_active else "禁用"
+        return Response({
+            'code': 200,
+            'message': f'部门已{status_text}',
+            'data': {'is_active': department.is_active}
+        })
+
+
+    @action(detail=False, methods=['get'], url_path='tree')
+    def tree(self, request):
+        """获取部门树形结构"""
+        # 只获取启用的部门
+        only_active = request.query_params.get('only_active', 'false').lower() == 'true'
+
+        if only_active:
+            departments = Department.objects.filter(is_active=True).order_by('order', 'id')
+        else:
+            departments = Department.objects.all().order_by('order', 'id')
+
+        # 构建树形结构
+        def build_tree(parent_id=None):
+            nodes = []
+            for dept in departments:
+                if dept.parent_id == parent_id:
+                    node = {
+                        'id': str(dept.id),
+                        'name': dept.name,
+                        'order': dept.order,
+                        'is_active': dept.is_active,
+                        'description': dept.description,
+                        'children': build_tree(dept.id)
+                    }
+                    nodes.append(node)
+            return nodes
+
+        tree_data = build_tree()
+        return Response({'code': 200, 'data': tree_data})
+
+    @action(detail=False, methods=['get'], url_path='options')
+    def options(self, request):
+        """获取部门选项列表（用于下拉框）"""
+        departments = Department.objects.filter(is_active=True).order_by('order', 'id')
+        data = [{'value': str(dept.id), 'label': dept.name} for dept in departments]
+        return Response({'code': 200, 'data': data})
+
+    @action(detail=True, methods=['get'], url_path='children')
+    def children(self, request, pk=None):
+        """获取指定部门的子部门列表"""
+        department = self.get_object()
+        children = department.children.all().order_by('order', 'id')
+        serializer = self.get_serializer(children, many=True)
+        return Response({'code': 200, 'data': serializer.data})
+
+    @action(detail=False, methods=['post'], url_path='deleteChecked')
+    def delete_checked(self, request):
+        """批量删除部门"""
+        ids = request.data.get('ids', [])
+
+        if not ids:
+            return Response({'code': 400, 'message': '请选择要删除的部门'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+        # 检查是否有子部门
+        departments_with_children = Department.objects.filter(
+            id__in=ids,
+            children__isnull=False
+        ).distinct()
+
+        if departments_with_children.exists():
+            dept_names = ', '.join([d.name for d in departments_with_children])
+            return Response({
+                'code': 400,
+                'message': f'以下部门有子部门，无法删除: {dept_names}'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # 执行删除
+        from django.db import transaction
+        with transaction.atomic():
+            deleted_count = Department.objects.filter(id__in=ids).delete()[0]
+
+        return Response({
+            'code': 200,
+            'message': f'成功删除 {deleted_count} 个部门'
+        })
+    
+    def destroy(self, request, *args, **kwargs):
+        """删除部门（防止删除有子部门的部门）"""
+        department = self.get_object()
+
+        # 检查是否有子部门
+        if department.children.exists():
+            return Response({
+                'code': 400,
+                'message': f'部门 "{department.name}" 有子部门，无法删除'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # 执行删除
+        department.delete()
+        return Response({
+            'code': 200,
+            'message': '部门删除成功'
+        })
+
+
+
+   
+
+
+
