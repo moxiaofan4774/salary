@@ -1,0 +1,139 @@
+@charset "utf-8";
+@media (max-width:1500px){
+.search-btn{right:10px}
+.ss{right:120px}
+.row3:before{margin-right:600px}
+}
+@media (max-width:1400px){
+.logo{width:300px}
+nav.navbar.bootsnav{margin-right:40px}
+nav.navbar.bootsnav ul.nav li a{padding:0 5px}
+nav.navbar.bootsnav ul.nav li:nth-child(2) ul.dropdown-menu{width:140%!important;left:-20%}
+nav.navbar.bootsnav ul.nav li:nth-child(3) ul.dropdown-menu{width:200%!important;left:-50%}
+}
+@media (max-width:1330px){
+.kstd-list{margin-right:0}
+}
+@media (max-width:1230px){
+.header{padding:0}
+.top{height:75px;padding:15px 0}
+.logo{width:220px}
+nav.navbar.bootsnav ul.nav li a{padding:0 7px}
+.c1{width:40%}
+.c2{width:56%}
+.row3:before{margin-right:485px}
+.footer .foot-logo img{width:80%}
+.footer .t2{margin-left:30px}
+.footer .t3{text-align:center}
+.footer .t3 a{margin-left:20px}
+.list-con .jgsz-list .box dd dl a{font-size:1rem}
+nav.navbar.bootsnav ul.nav li:nth-child(2) ul.dropdown-menu{width:140%!important;left:-20%}
+nav.navbar.bootsnav ul.nav li:nth-child(3) ul.dropdown-menu{width:200%!important;left:-50%}
+}
+@media (max-width:1200px){
+.search-btn{right:20px}
+.ss{right:60px}
+}
+@media (max-width:992px){
+.header-top{position:relative}
+nav.navbar.bootsnav{position:absolute;top:16px;width:auto;right:27px}
+.news-list li a{padding:10px}
+.box_cen ul li{width:48%}
+.banner{width:100%;height:auto;position:relative;margin-top:100px}
+.banner .flexslider img{vertical-align:top;width:100%;height:auto;object-fit:cover}
+.header-fixed{background:#fff!important}
+.top{background:0 0}
+.logo a{display:none}
+.header-fixed.list-header .logo a{display:block}
+.phone-logo{display:block!important}
+.main-box .header-fixed .top{background:#fff}
+.main-box{width:auto;height:auto;position:static;opacity:1;transform:none;overflow:hidden;padding-top:0}
+body.side-right>.wrapper{margin-left:0;margin-right:0!important}
+.side-right .wrapper .mask{position:fixed;z-index:12;right:0;left:0;top:0;height:100%;background:rgba(12,71,158,.78)}
+nav.navbar.bootsnav .navbar-toggle{float:right;margin:0;right:26px;top:11px;background:0 0;color:#0080ca}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse{background:#444;width:240px;top:-5px}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse ul.nav{width:100%;padding-right:0;padding-left:0;padding-bottom:100px}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse ul.nav li{float:none;width:100%;text-align:left;padding:0 15px}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse ul.nav li a{width:240px;padding:5px 15px;color:#fff;border-top:0}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse ul.nav li ul.dropdown-menu{top:0;padding-left:0!important}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse ul.nav li ul.dropdown-menu li{text-align:left}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse ul.nav li ul.dropdown-menu li a{color:#fff;padding:10px}
+nav.navbar.bootsnav.navbar-mobile .navbar-collapse ul.nav li ul.dropdown-menu:before{display:none}
+.c1,.c2{width:100%;float:none;overflow:hidden}
+.c2{margin-top:20px}
+.row1 .index-more{float:right;margin-top:0}
+.row2{padding-top:0;padding-bottom:0}
+.row3:before{margin-right:375px}
+.item{margin-top:18px!important}
+.footer .t1{width:48%}
+.footer .t2{width:48%;margin-left:0}
+.footer .links{margin-left:0}
+.footer .t3{float:none}
+.footer .t3 a{margin-top:20px;margin-left:5px}
+.nav-left{display:none}
+.list-con{width:100%}
+.c1,.c2,.index-tit,.row2,.row3,.row4,.t1,.t2,.t3,.zttj-list{opacity:1!important;transform:none!important}
+.row1 .index-news{display:block}
+.row1 .ptbox{width:100%}
+.row1 .textbox{margin-top:20px;width:100%}
+.news-list li{margin-bottom:20px}
+nav.navbar.bootsnav ul.nav li:nth-child(2) ul.dropdown-menu{left:0}
+nav.navbar.bootsnav ul.nav li:nth-child(3) ul.dropdown-menu{left:0}
+}
+@media (max-width:768px){
+html{font-size:14px}
+.banner .flex-direction-nav{display:none}
+.banner{height:20rem;overflow:hidden}
+.banner .flexslider img{height:20rem;width:auto}
+.container{padding:0 15px}
+nav.navbar.bootsnav .navbar-toggle{right:20px}
+.news-list li{width:calc(50% - 6px)}
+.news-list li .tit{height:84px;-webkit-line-clamp:3}
+.row3:before{display:none}
+.row3 .index-tit{height:100px;border-radius:0 30px 30px 0;float:none;background:#0080ca;padding-left:15px;opacity:1!important;transform:none!important}
+.row3 .index-tit p.cn{margin-top:32px}
+.kstd-list{width:100%;padding:0 15px}
+.kstd-list .slick-prev{left:-20px;top:40%}
+.kstd-list .slick-next{right:-20px;top:40%}
+.row4 .index-tit{right:15px}
+nav.navbar.bootsnav ul.nav li:nth-child(2) ul.dropdown-menu{width:140%!important;left:-20%}
+nav.navbar.bootsnav ul.nav li:nth-child(3) ul.dropdown-menu{width:200%!important;left:-50%}
+}
+@media (max-width:500px){
+html{font-size:14px}
+.header{line-height:28px}
+.header .tips,.header .top-links{width:100%;text-align:left;padding-left:.5rem}
+.top{height:60px}
+.search-btn{top:-4px;right:1px}
+.box_cen ul li{width:98%}
+.ss{top:-4px;background:#05598a;right:40px}
+nav.navbar.bootsnav .navbar-toggle{right:5px;top:3px}
+.ss.active{width:200px}
+.ss.active .text{width:150px}
+nav.navbar.bootsnav .navbar-header{padding:0}
+.logo{width:200px}
+nav.navbar.bootsnav{top:0;margin-right:0;right:40px}
+.index-tit p.cn{font-size:1.25rem}
+.index-tit p.en{font-size:1.5rem}
+.notice-list{padding:1px 15px 30px}
+.media-list .bd li .media{width:100%;height:30px;line-height:30px;float:none}
+.media-list .bd li .tit{width:100%;margin-right:0;line-height:40px}
+.news-list li{margin-bottom:20px}
+.row3{margin-top:20px}
+.footer{text-align:center}
+.footer .t1,.footer .t2{width:100%}
+.footer .links{width:100%}
+.footer .t3 a{margin-left:0}
+.footer .bq,.footer .fw{width:100%;text-align:center}
+.list-page{padding-bottom:0;padding-top:30px}
+.list-con ul.list-text li{padding-left:20px}
+.list-con ul.list-text li a{width:calc(100% - 80px)}
+.list-con ul.list-pics li{width:50%}
+.list-con .jgsz-list .hd li{width:50%}
+.list-con .jgsz-list .box dd dl{width:100%}
+.article-con .info span{padding-right:15px}
+.article-con .article-text{padding:0 15px 40px}
+.updown{padding:15px}
+nav.navbar.bootsnav ul.nav li:nth-child(2) ul.dropdown-menu{left:0}
+nav.navbar.bootsnav ul.nav li:nth-child(3) ul.dropdown-menu{left:0}
+}

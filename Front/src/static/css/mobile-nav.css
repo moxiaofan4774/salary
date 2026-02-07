@@ -1,0 +1,238 @@
+@charset "utf-8";
+
+/* 防止菜单打开时body滚动 */
+body.mobile-nav-open {
+  overflow: hidden;
+}
+
+/* 新手机导航按钮 - 默认隐藏 */
+.mobile-nav-toggle {
+  display: none;
+}
+
+/* 手机端导航菜单样式 */
+@media (max-width: 992px) {
+  /* 隐藏原来的导航 */
+  .navbar-mobile.bootsnav {
+    display: none !important;
+  }
+
+  nav.navbar.bootsnav .navbar-toggle {
+    display: none !important;
+  }
+
+  /* 新手机导航按钮 */
+  .mobile-nav-toggle {
+    display: block !important;
+    position: absolute !important;
+    right: 15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 45px !important;
+    height: 45px !important;
+    background: #0080ca !important;
+    border: none !important;
+    cursor: pointer !important;
+    z-index: 10000 !important;
+    padding: 8px !important;
+    border-radius: 5px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+  }
+
+  /* 确保按钮在header顶部区域内 */
+  .header-top {
+    position: relative !important;
+  }
+
+  .top {
+    position: relative !important;
+  }
+
+  .mobile-nav-toggle span {
+    display: block !important;
+    width: 28px !important;
+    height: 3px !important;
+    background: #fff !important;
+    margin: 5px auto !important;
+    transition: all 0.3s ease !important;
+    border-radius: 2px !important;
+  }
+
+  .mobile-nav-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+  }
+
+  .mobile-nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-nav-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+  }
+
+  /* 遮罩层 */
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .mobile-nav-overlay.active {
+    display: block;
+    opacity: 1;
+  }
+
+  /* 手机端导航菜单容器 */
+  .mobile-nav-menu {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: #444;
+    z-index: 9999;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: left 0.3s ease-in-out;
+    padding-bottom: 50px;
+  }
+
+  .mobile-nav-menu.active {
+    left: 0;
+  }
+
+  /* 菜单头部 */
+  .mobile-nav-header {
+    padding: 20px 15px;
+    background: #333;
+    border-bottom: 1px solid #555;
+  }
+
+  .mobile-nav-header .logo {
+    width: 100%;
+    text-align: center;
+  }
+
+  .mobile-nav-header .logo img {
+    max-width: 200px;
+    height: auto;
+  }
+
+  /* 菜单列表 */
+  .mobile-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-nav-list > li {
+    border-bottom: 1px solid #555;
+  }
+
+  .mobile-nav-list > li > a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background 0.3s ease;
+    position: relative;
+  }
+
+  .mobile-nav-list > li > a:hover {
+    background: #555;
+  }
+
+  /* 有子菜单的项目 */
+  .mobile-nav-list > li.has-submenu > a::after {
+    content: '\f107';
+    font-family: FontAwesome;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-nav-list > li.has-submenu.active > a::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  /* 子菜单 */
+  .mobile-nav-submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: #333;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .mobile-nav-list > li.has-submenu.active .mobile-nav-submenu {
+    max-height: 1000px;
+  }
+
+  .mobile-nav-submenu li {
+    border-bottom: 1px solid #444;
+  }
+
+  .mobile-nav-submenu li:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-nav-submenu li a {
+    display: block;
+    padding: 12px 20px 12px 40px;
+    color: #ddd;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-nav-submenu li a:hover {
+    background: #444;
+    color: #fff;
+    padding-left: 45px;
+  }
+
+  /* 当前页面高亮 */
+  .mobile-nav-list > li.current > a {
+    background: #0080ca;
+    font-weight: bold;
+  }
+
+  /* 滚动条样式 */
+  .mobile-nav-menu::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .mobile-nav-menu::-webkit-scrollbar-track {
+    background: #333;
+  }
+
+  .mobile-nav-menu::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 3px;
+  }
+
+  .mobile-nav-menu::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
+}
+
+/* 大屏幕隐藏手机导航 */
+@media (min-width: 993px) {
+  .mobile-nav-toggle,
+  .mobile-nav-overlay,
+  .mobile-nav-menu {
+    display: none !important;
+  }
+}
