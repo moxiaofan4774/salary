@@ -100,7 +100,31 @@ const router = createRouter({
           component: () => import('@/views/system/user/DepartmentAdmin.vue'),
           meta: { title: '部门管理', closable: true, requiresAuth: true },
         },
-       
+        {
+          path: '/titleCategoryAdmin',
+          name: 'titleCategoryAdmin',
+          component: () => import('@/views/system/user/TitleCategoryAdmin.vue'),
+          meta: { title: '职称分类管理', closable: true, requiresAuth: true },
+        },
+        {
+          path: '/employeeProfileAdmin',
+          name: 'employeeProfileAdmin',
+          component: () => import('@/views/system/user/EmployeeProfileAdmin.vue'),
+          meta: { title: '员工档案管理', closable: true, requiresAuth: true },
+        },
+        {
+          path: '/employeeTitleHistoryAdmin',
+          name: 'employeeTitleHistoryAdmin',
+          component: () => import('@/views/system/user/EmployeeTitleHistoryAdmin.vue'),
+          meta: { title: '员工职称历史管理', closable: true, requiresAuth: true },
+        },
+        {
+          path: '/operationLogAdmin',
+          name: 'operationLogAdmin',
+          component: () => import('@/views/system/user/OperationLogAdmin.vue'),
+          meta: { title: '操作日志管理', closable: true, requiresAuth: true },
+        },
+
       ]
     },
     {

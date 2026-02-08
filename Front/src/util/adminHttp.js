@@ -8,7 +8,7 @@ const serverUrl = import.meta.env.VITE_APP_SERVER_URL
 
 const adminHttp = axios.create({
     baseURL: `${serverUrl}/`,
-    timeout: 30000, // 增加到30秒，支持批量操作
+    timeout: 300000, // 增加到30秒，支持批量操作
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     }
@@ -16,8 +16,8 @@ const adminHttp = axios.create({
 
 // 最后活动时间
 let lastActivityTime = Date.now()
-// 超时时长（30分钟，单位：毫秒）
-const TIMEOUT_DURATION = 30 * 60 * 1000
+// 超时时长（24小时，单位：毫秒）
+const TIMEOUT_DURATION = 24 * 60 * 60 * 1000
 
 // 更新最后活动时间
 const updateActivity = () => {

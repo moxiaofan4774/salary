@@ -4,13 +4,13 @@
     <div class="toolbar">
       <el-button type="primary" @click="openDialog('add')">
         <el-icon><Plus /></el-icon>
-        新增部门
+        新增职称分类
       </el-button>
       <el-button type="danger" :disabled="selectedIds.length === 0" @click="batchDelete">
         <el-icon><Delete /></el-icon>
         批量删除
       </el-button>
-      <el-button @click="fetchDepartments">
+      <el-button @click="fetchCategories">
         <el-icon><Refresh /></el-icon>
         刷新
       </el-button>
@@ -20,7 +20,7 @@
     <div class="search-bar">
       <el-input
         v-model="searchName"
-        placeholder="搜索部门名称"
+        placeholder="搜索分类名称"
         clearable
         style="width: 300px; margin-right: 10px"
         @clear="handleSearch"
@@ -46,9 +46,9 @@
       </el-button>
     </div>
 
-    <!-- 部门树形表格 -->
+    <!-- 职称分类树形表格 -->
     <el-table
-      :data="departmentTree"
+      :data="categoryTree"
       row-key="id"
       border
       default-expand-all
@@ -61,9 +61,9 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" label="序号" width="80" align="center" />
-      <el-table-column prop="name" label="部门名称" min-width="200">
+      <el-table-column prop="name" label="分类名称" min-width="200">
         <template #default="{ row }">
-          <span class="department-name">{{ row.name }}</span>
+          <span class="category-name">{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="order" label="排序" width="120" align="center">
@@ -86,13 +86,12 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="employee_count" label="员工数" width="100" align="center">
+      <el-table-column prop="title_count" label="职称数" width="100" align="center">
         <template #default="{ row }">
-          
-          <el-tag type="info" size="small">{{ row.employee_count }}</el-tag>
+          <el-tag type="info" size="small">{{ row.title_count }}</el-tag>
         </template>
       </el-table-column>
-      
+      <el-table-column prop="description" label="描述" min-width="180" show-overflow-tooltip />
       <el-table-column label="操作" width="280" align="center" fixed="right">
         <template #default="scope">
           <el-button
@@ -112,7 +111,7 @@
           <el-button
             size="small"
             type="danger"
-            @click.stop="deleteDepartment(scope.row)"
+            @click.stop="deleteCategory(scope.row)"
           >
             删除
           </el-button>
@@ -129,20 +128,20 @@
     :close-on-click-modal="false"
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-      <el-form-item label="部门名称" prop="name">
+      <el-form-item label="分类名称" prop="name">
         <el-input
           v-model="form.name"
-          placeholder="请输入部门名称"
+          placeholder="请输入分类名称"
           clearable
           maxlength="100"
           show-word-limit
         />
       </el-form-item>
-      <el-form-item label="上级部门" prop="parent">
+      <el-form-item label="上级分类" prop="parent">
         <el-tree-select
           v-model="form.parent"
-          :data="departmentTreeOptions"
-          placeholder="请选择上级部门（不选则为顶级部门）"
+          :data="categoryTreeOptions"
+          placeholder="请选择上级分类（不选则为顶级分类）"
           clearable
           filterable
           check-strictly
@@ -170,7 +169,7 @@
         <el-input
           v-model="form.description"
           type="textarea"
-          placeholder="请输入部门描述"
+          placeholder="请输入分类描述"
           :rows="4"
           maxlength="300"
           show-word-limit
@@ -190,12 +189,12 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete, Refresh, Search } from '@element-plus/icons-vue'
-import departmentApi from '@/api/user/departmentApi'
+import titleCategoryApi from '@/api/user/titleCategoryApi'
 import 'element-plus/dist/index.css'
 
 // 数据
-const departmentTree = ref([])
-const flatDepartmentList = ref([])
+const categoryTree = ref([])
+const flatCategoryList = ref([])
 const selectedIds = ref([])
 const searchName = ref('')
 const searchStatus = ref('')
@@ -219,25 +218,25 @@ const form = reactive({
 // 表单验证规则
 const rules = {
   name: [
-    { required: true, message: '部门名称为必填项', trigger: 'blur' },
+    { required: true, message: '分类名称为必填项', trigger: 'blur' },
     { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' },
   ],
   order: [{ required: true, message: '排序为必填项', trigger: 'blur' }],
 }
 
 // 计算属性：树形选择器数据
-const departmentTreeOptions = computed(() => {
-  return buildTreeSelectOptions(departmentTree.value, form.id)
+const categoryTreeOptions = computed(() => {
+  return buildTreeSelectOptions(categoryTree.value, form.id)
 })
 
 /**
- * 构建树形选择器数据（排除当前编辑的部门及其子部门）
+ * 构建树形选择器数据（排除当前编辑的分类及其子分类）
  */
 function buildTreeSelectOptions(list, excludeId = null) {
   const options = []
   for (const item of list) {
     if (item.id === excludeId) {
-      continue // 排除当前编辑的部门
+      continue // 排除当前编辑的分类
     }
     const option = {
       value: item.id,
@@ -250,9 +249,9 @@ function buildTreeSelectOptions(list, excludeId = null) {
 }
 
 /**
- * 获取部门列表
+ * 获取职称分类列表
  */
-const fetchDepartments = async () => {
+const fetchCategories = async () => {
   try {
     const params = {}
     if (searchName.value) {
@@ -262,27 +261,27 @@ const fetchDepartments = async () => {
       params.is_active = searchStatus.value === 'true'
     }
 
-    const res = await departmentApi.getList(params)
+    const res = await titleCategoryApi.getList(params)
     if (res.status === 200) {
       // 如果有搜索条件，返回的是扁平列表，需要构建树形结构
       const data = res.data.results || res.data
       if (searchName.value || searchStatus.value !== '') {
         // 有搜索条件时，显示扁平列表
-        departmentTree.value = data
+        categoryTree.value = data
       } else {
         // 无搜索条件时，获取树形结构
-        const treeRes = await departmentApi.getTree()
+        const treeRes = await titleCategoryApi.getTree()
         if (treeRes.status === 200 && treeRes.data.code === 200) {
-          departmentTree.value = treeRes.data.data
+          categoryTree.value = treeRes.data.data
         } else {
-          departmentTree.value = buildTree(data)
+          categoryTree.value = buildTree(data)
         }
       }
-      flatDepartmentList.value = flatten(departmentTree.value)
+      flatCategoryList.value = flatten(categoryTree.value)
     }
   } catch (error) {
-    console.error('获取部门列表失败:', error)
-    ElMessage.error('获取部门列表失败')
+    console.error('获取职称分类列表失败:', error)
+    ElMessage.error('获取职称分类列表失败')
   }
 }
 
@@ -304,7 +303,7 @@ function buildTree(list, parentId = null) {
 }
 
 /**
- * 扁平化部门列表
+ * 扁平化分类列表
  */
 function flatten(list) {
   let arr = []
@@ -312,7 +311,7 @@ function flatten(list) {
     arr.push({
       id: item.id,
       name: item.name,
-      employee_count: item.employee_count,
+      title_count: item.title_count,
       is_active: item.is_active,
       parent: item.parent,
       order: item.order,
@@ -329,14 +328,14 @@ function flatten(list) {
  * 搜索处理
  */
 const handleSearch = () => {
-  fetchDepartments()
+  fetchCategories()
 }
 
 /**
  * 表格行类名
  */
 const rowClassName = ({ row }) => {
-  return row.parent ? 'department-child-row' : 'department-parent-row'
+  return row.parent ? 'category-child-row' : 'category-parent-row'
 }
 
 /**
@@ -351,7 +350,7 @@ const handleSelectionChange = (selection) => {
  */
 const openDialog = (type, data = null) => {
   if (type === 'add') {
-    dialogTitle.value = '新增部门'
+    dialogTitle.value = '新增职称分类'
     Object.assign(form, {
       id: '',
       name: '',
@@ -361,7 +360,7 @@ const openDialog = (type, data = null) => {
       description: '',
     })
   } else if (type === 'edit' && data) {
-    dialogTitle.value = '编辑部门'
+    dialogTitle.value = '编辑职称分类'
     Object.assign(form, {
       id: data.id,
       name: data.name,
@@ -393,21 +392,21 @@ const submitForm = () => {
 
       if (form.id) {
         // 编辑
-        const res = await departmentApi.update(form.id, submitData)
+        const res = await titleCategoryApi.update(form.id, submitData)
         if (res.status === 200) {
           ElMessage.success('编辑成功')
           dialogVisible.value = false
-          fetchDepartments()
+          fetchCategories()
         } else {
           ElMessage.error(res.data.message || '编辑失败')
         }
       } else {
         // 新增
-        const res = await departmentApi.create(submitData)
+        const res = await titleCategoryApi.create(submitData)
         if (res.status === 201) {
           ElMessage.success('新增成功')
           dialogVisible.value = false
-          fetchDepartments()
+          fetchCategories()
         } else {
           ElMessage.error(res.data.message || '新增失败')
         }
@@ -426,10 +425,10 @@ const submitForm = () => {
  */
 const toggleStatus = async (row) => {
   try {
-    const res = await departmentApi.toggleActive(row.id)
+    const res = await titleCategoryApi.toggleActive(row.id)
     if (res.status === 200 && res.data.code === 200) {
       ElMessage.success(res.data.message)
-      fetchDepartments()
+      fetchCategories()
     } else {
       ElMessage.error(res.data.message || '操作失败')
     }
@@ -440,11 +439,11 @@ const toggleStatus = async (row) => {
 }
 
 /**
- * 删除部门
+ * 删除职称分类
  */
-const deleteDepartment = (row) => {
+const deleteCategory = (row) => {
   ElMessageBox.confirm(
-    `确定要删除部门"${row.name}"吗？如果该部门有子部门，将无法删除。`,
+    `确定要删除职称分类"${row.name}"吗？如果该分类有子分类，将无法删除。`,
     '提示',
     {
       confirmButtonText: '确定',
@@ -454,10 +453,10 @@ const deleteDepartment = (row) => {
   )
     .then(async () => {
       try {
-        const res = await departmentApi.delete(row.id)
+        const res = await titleCategoryApi.delete(row.id)
         if (res.status === 200 && res.data.code === 200) {
           ElMessage.success('删除成功')
-          fetchDepartments()
+          fetchCategories()
         } else {
           ElMessage.error(res.data.message || '删除失败')
         }
@@ -474,12 +473,12 @@ const deleteDepartment = (row) => {
  */
 const batchDelete = () => {
   if (selectedIds.value.length === 0) {
-    ElMessage.warning('请选择要删除的部门')
+    ElMessage.warning('请选择要删除的职称分类')
     return
   }
 
   ElMessageBox.confirm(
-    `确定要删除选中的 ${selectedIds.value.length} 个部门吗？`,
+    `确定要删除选中的 ${selectedIds.value.length} 个职称分类吗？`,
     '提示',
     {
       confirmButtonText: '确定',
@@ -489,11 +488,11 @@ const batchDelete = () => {
   )
     .then(async () => {
       try {
-        const res = await departmentApi.deleteChecked(selectedIds.value)
+        const res = await titleCategoryApi.deleteChecked(selectedIds.value)
         if (res.status === 200 && res.data.code === 200) {
           ElMessage.success(res.data.message)
           selectedIds.value = []
-          fetchDepartments()
+          fetchCategories()
         } else {
           ElMessage.error(res.data.message || '删除失败')
         }
@@ -523,10 +522,10 @@ const handleUpdateOrder = (row) => {
         return
       }
       try {
-        const res = await departmentApi.patch(row.id, { order: newOrder })
+        const res = await titleCategoryApi.patch(row.id, { order: newOrder })
         if (res.status === 200) {
           ElMessage.success('排序更新成功')
-          fetchDepartments()
+          fetchCategories()
         } else {
           ElMessage.error('排序更新失败')
         }
@@ -540,7 +539,7 @@ const handleUpdateOrder = (row) => {
 
 // 组件挂载时获取数据
 onMounted(() => {
-  fetchDepartments()
+  fetchCategories()
 })
 </script>
 
@@ -564,7 +563,7 @@ onMounted(() => {
   border-radius: 4px;
 }
 
-.department-name {
+.category-name {
   font-weight: 500;
   color: #303133;
 }
@@ -576,20 +575,20 @@ onMounted(() => {
   font-weight: 500;
 }
 
-:deep(.department-parent-row) .el-table__cell {
+:deep(.category-parent-row) .el-table__cell {
   background-color: #f5f7fa !important;
   font-weight: 500;
 }
 
-:deep(.department-parent-row) .el-table__cell:last-child {
+:deep(.category-parent-row) .el-table__cell:last-child {
   background-color: #ffffff !important;
 }
 
-:deep(.department-child-row) .el-table__cell {
+:deep(.category-child-row) .el-table__cell {
   background-color: #fafafa !important;
 }
 
-:deep(.department-child-row) .el-table__cell:last-child {
+:deep(.category-child-row) .el-table__cell:last-child {
   background-color: #ffffff !important;
 }
 

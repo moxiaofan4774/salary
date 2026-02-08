@@ -48,6 +48,9 @@
           <el-button type="success" @click="openImportDialog">
             <el-icon><UploadFilled /></el-icon>导入数据
           </el-button>
+          <el-button @click="handleDownloadTemplate">
+            <el-icon><Download /></el-icon>下载模板
+          </el-button>
           <el-button type="danger" :disabled="!multipleSelection.length" @click="handleBatchDelete">
             <el-icon><Delete /></el-icon>批量删除
           </el-button>
@@ -181,7 +184,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Edit, Delete, Refresh, Search, Close, Check, UploadFilled, Calendar } from '@element-plus/icons-vue'
+import { Plus, Edit, Delete, Refresh, Search, Close, Check, UploadFilled, Calendar, Download } from '@element-plus/icons-vue'
 import salaryKouKuanApi from '@/api/salary/salaryKouKuanApi'
 import yearAndMonthAPI from '@/api/salary/yearAndMonthApi'
 
@@ -469,6 +472,15 @@ async function handleImportSubmit() {
   } finally {
     importLoading.value = false
   }
+}
+
+// 下载模板
+function handleDownloadTemplate() {
+  const link = document.createElement('a')
+  link.href = '/templates/salary_koukuan_template.xlsx'
+  link.download = 'salary_koukuan_template.xlsx'
+  link.click()
+  ElMessage.success('模板下载成功')
 }
 
 onMounted(() => {

@@ -197,10 +197,10 @@ REST_FRAMEWORK = {
 
 # JWT 配置
 SIMPLE_JWT = {
-    # access token 有效期（30分钟）
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    # refresh token 有效期（7天）
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    # access token 有效期（24小时）
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
+    # refresh token 有效期（30天）
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     # 是否自动刷新 refresh token（每次刷新时返回新的 refresh token）
     'ROTATE_REFRESH_TOKENS': True,
     # 旧的 refresh token 是否加入黑名单

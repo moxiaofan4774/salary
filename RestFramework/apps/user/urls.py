@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView,TokenVerifyView
-from .views import LoginView, ChangePasswordView, UserViewSet, RoleViewSet, FrontLoginView, GetCasLoginUrlView,CASCallbackView, DepartmentViewSet
+from .views import LoginView, ChangePasswordView, UserViewSet, RoleViewSet, FrontLoginView, GetCasLoginUrlView,CASCallbackView, DepartmentViewSet, TitleCategoryViewSet, EmployeeProfileViewSet, EmployeeTitleHistoryViewSet, OperationLogViewSet
 
 router = routers.DefaultRouter()
 
@@ -9,6 +9,10 @@ router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'roles', RoleViewSet, basename='roles')  # 角色API：/api/roles/
 router.register(r'departments', DepartmentViewSet, basename='departments')  # 部门API：/api/departments/
+router.register(r'title-categories', TitleCategoryViewSet, basename='title-categories')  # 职称分类API：/api/title-categories/
+router.register(r'employee-profiles', EmployeeProfileViewSet, basename='employee-profiles')  # 员工档案API：/api/employee-profiles/
+router.register(r'employee-title-history', EmployeeTitleHistoryViewSet, basename='employee-title-history')  # 员工职称历史API：/api/employee-title-history/
+router.register(r'operation-logs', OperationLogViewSet, basename='operation-logs')  # 操作日志API：/api/operation-logs/
 
 urlpatterns = [
     # 认证相关URL
