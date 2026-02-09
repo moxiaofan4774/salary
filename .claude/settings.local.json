@@ -6,7 +6,10 @@
       "Bash(pip install:*)",
       "Bash(curl:*)",
       "Bash(cat:*)",
-      "Bash(xargs cat:*)"
+      "Bash(xargs cat:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
