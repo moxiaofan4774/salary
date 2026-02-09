@@ -9,33 +9,31 @@
           <p class="card-subtitle">请选择需要对比的两个工资发放月份</p>
         </div>
         <div class="search-option-list">
-          <div class="option-row">
-            <span class="option-label">第一个月份</span>
-            <div class="option-content">
+          <div class="date-picker-group">
+            <div class="date-picker-item">
+              <span class="date-label">开始日期</span>
               <el-date-picker
                 v-model="firstMonth"
                 type="month"
                 value-format="YYYY-MM"
-                placeholder="请选择月份"
-                class="month-picker"
+                placeholder="开始日期"
+                class="full-width-picker"
               />
             </div>
-          </div>
-          <div class="option-row">
-            <span class="option-label">第二个月份</span>
-            <div class="option-content">
+            <div class="date-picker-item">
+              <span class="date-label">结束日期</span>
               <el-date-picker
                 v-model="secondMonth"
                 type="month"
                 value-format="YYYY-MM"
-                placeholder="请选择月份"
-                class="month-picker"
+                placeholder="结束日期"
+                class="full-width-picker"
               />
             </div>
           </div>
           <div class="option-row action-row">
             <el-button class="compare-button" type="primary" :loading="loading" @click="handleCompare">
-              开始对比
+              点击进行详细查询
             </el-button>
           </div>
           <p class="month-hint" v-if="availableMonthsHint">
@@ -215,7 +213,13 @@ const fetchDetail = async (record, idCard) => {
 
 const handleCompare = async () => {
   if (!firstMonth.value || !secondMonth.value) {
-    ElMessage.warning('请先选择两个月份')
+    ElMessage.warning('请先选择开始日期和结束日期')
+    return
+  }
+
+  // 验证结束日期必须大于开始日期
+  if (secondMonth.value <= firstMonth.value) {
+    ElMessage.warning('结束日期必须大于开始日期')
     return
   }
 
@@ -488,6 +492,39 @@ const tableRows = computed(() => {
 
 .search-option-list {
   padding: 6px 4px;
+}
+
+.date-picker-group {
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.date-picker-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  width: 60%;
+}
+
+.date-picker-item:last-child {
+  margin-bottom: 0;
+}
+
+.date-label {
+  font-size: 14px;
+  color: #4c5c74;
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.full-width-picker {
+  flex: 1;
+}
+
+.full-width-picker :deep(.el-input__wrapper) {
+  width: 100%;
 }
 
 .option-row {

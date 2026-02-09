@@ -6,15 +6,23 @@
       <div class="panel-header">
         <h3>查询条件</h3>
         <div class="panel-actions">
-          <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            unlink-panels
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="YYYY-MM-DD"
-          />
+          <div class="date-range-wrapper">
+            <el-date-picker
+              v-model="startDate"
+              type="month"
+              value-format="YYYY-MM"
+              placeholder="开始日期"
+              class="date-picker-item"
+            />
+            <span class="date-separator">至</span>
+            <el-date-picker
+              v-model="endDate"
+              type="month"
+              value-format="YYYY-MM"
+              placeholder="结束日期"
+              class="date-picker-item"
+            />
+          </div>
           <el-button class="search-button" type="primary" plain :icon="Search" :loading="loading" @click="handleSearch">
             点击进行详细查询
           </el-button>
@@ -126,7 +134,8 @@ import { useUserStore } from '@/stores/userStore'
 const router = useRouter()
 const userStore = useUserStore()
 
-const dateRange = ref([])
+const startDate = ref('')
+const endDate = ref('')
 const searchResults = ref([])
 const activePanels = ref([])
 const loading = ref(false)
@@ -158,8 +167,14 @@ const totalDeduction = computed(() =>
 const totalNetSalary = computed(() => totalIncome.value - totalDeduction.value)
 
 const handleSearch = async () => {
-  if (!dateRange.value || dateRange.value.length !== 2) {
-    ElMessage.warning('请选择开始和结束日期')
+  if (!startDate.value || !endDate.value) {
+    ElMessage.warning('请选择开始日期和结束日期')
+    return
+  }
+
+  // 验证结束日期必须大于开始日期
+  if (endDate.value <= startDate.value) {
+    ElMessage.warning('结束日期必须大于开始日期')
     return
   }
 
@@ -169,12 +184,8 @@ const handleSearch = async () => {
     return
   }
 
-  const start = dayjs(dateRange.value[0])
-  const end = dayjs(dateRange.value[1])
-  if (end.isBefore(start)) {
-    ElMessage.warning('结束日期不能早于开始日期')
-    return
-  }
+  const start = dayjs(startDate.value + '-01')
+  const end = dayjs(endDate.value + '-01')
 
   loading.value = true
   try {
@@ -337,12 +348,32 @@ const buildDetailPanels = (yingfa, koukuan) => {
 
 .panel-actions {
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  flex-wrap: wrap;
+  width: 100%;
+  align-items: center;
+}
+
+.date-range-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 95%;
+}
+
+.date-picker-item {
+  flex: 1;
+}
+
+.date-separator {
+  font-size: 14px;
+  color: #666;
+  padding: 0 8px;
+  flex-shrink: 0;
 }
 
 .search-button {
-  flex: 1 1 100%;
+  width: 50%;
 }
 
 .summary-panel {

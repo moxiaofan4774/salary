@@ -1,8 +1,13 @@
 export default[
     {
+      path: '/frontLoginOnlyMe',
+      name: 'frontLoginOnlyMe',
+      component:() => import('@/views/front/Login-localLogin.vue'),
+      meta: { title: '员工登录' }
+    },{
       path: '/',
       name: 'frontLogin',
-      component:() => import('@/views/front/Login-localLogin.vue'),
+      component:() => import('@/views/front/Login.vue'),
       meta: { title: '员工登录' }
     },
     {
