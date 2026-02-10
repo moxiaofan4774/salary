@@ -4,7 +4,8 @@ export default[
       name: 'frontLoginOnlyMe',
       component:() => import('@/views/front/Login-localLogin.vue'),
       meta: { title: '员工登录' }
-    },{
+    }, 
+    {
       path: '/',
       name: 'frontLogin',
       component:() => import('@/views/front/Login.vue'),
@@ -22,7 +23,7 @@ export default[
       component: () => import('@/views/front/SalaryList.vue'),
       meta: { title: '工资列表', requiresFrontAuth: true }
     },
-
+    
     {
       path:'/salaryDetails',
       name: 'salaryDetails',

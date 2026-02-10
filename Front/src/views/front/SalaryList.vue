@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="salary-list-page">
     <el-page-header class="salary-header" content="薪资列表" @back="handleBack" />
-    <div class="quick-actions">
+    <div class="quick-actions" style="display: none;">
       <div
         class="quick-card"
         v-for="action in quickActions"

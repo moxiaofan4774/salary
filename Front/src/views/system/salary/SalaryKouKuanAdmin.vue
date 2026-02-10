@@ -54,6 +54,9 @@
           <el-button type="danger" :disabled="!multipleSelection.length" @click="handleBatchDelete">
             <el-icon><Delete /></el-icon>批量删除
           </el-button>
+          <el-button type="warning" :disabled="!selectedYearMonthId" @click="handleClearCurrentMonth">
+            <el-icon><Delete /></el-icon>清空当前月数据
+          </el-button>
         </div>
 
         <el-table
@@ -240,7 +243,13 @@ async function fetchYearMonthList() {
   try {
     const res = await yearAndMonthAPI.getList()
     if (res.status === 200) {
-      yearMonthList.value = Array.isArray(res.data?.results) ? res.data.results : res.data
+      const list = Array.isArray(res.data?.results) ? res.data.results : res.data
+      // 按照年月降序排序（最新的在前）
+      yearMonthList.value = list.sort((a, b) => {
+        const keyA = a.year * 100 + a.month
+        const keyB = b.year * 100 + b.month
+        return keyB - keyA
+      })
     }
   } catch (error) {
     console.error('获取年月列表失败:', error)
@@ -396,6 +405,47 @@ function handleBatchDelete() {
       }
     } catch (error) {
       ElMessage.error('批量删除失败')
+    }
+  })
+}
+
+// 清空当前月数据
+function handleClearCurrentMonth() {
+  if (!selectedYearMonthId.value) {
+    ElMessage.warning('请先选择年月')
+    return
+  }
+
+  const selectedMonth = yearMonthList.value.find(item => item.id === selectedYearMonthId.value)
+  const monthLabel = selectedMonth ? `${selectedMonth.year}年${selectedMonth.month}月` : '当前月'
+
+  ElMessageBox.confirm(`确定要清空${monthLabel}的所有扣款数据吗？此操作不可恢复！`, '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async () => {
+    try {
+      // 获取当前月的所有数据ID
+      const res = await salaryKouKuanApi.getList({
+        year_month_id: selectedYearMonthId.value,
+        pageSize: 999999
+      })
+
+      if (res && res.data && res.data.results) {
+        const ids = res.data.results.map(item => item.id)
+        if (ids.length === 0) {
+          ElMessage.info('当前月没有数据')
+          return
+        }
+
+        const deleteRes = await salaryKouKuanApi.deleteChecked(ids)
+        if (deleteRes && deleteRes.data.code === 200) {
+          ElMessage.success(`成功清空${monthLabel}的${ids.length}条数据`)
+          fetchList()
+        }
+      }
+    } catch (error) {
+      ElMessage.error('清空数据失败')
     }
   })
 }

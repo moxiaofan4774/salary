@@ -133,7 +133,13 @@ const fetchYearMonths = async () => {
   try {
     const res = await yearAndMonthAPI.getList()
     if (res.status === 200) {
-      dataList.value = normalizeList(res.data)
+      const list = normalizeList(res.data)
+      // 按照年月降序排序（最新的在前）
+      dataList.value = list.sort((a, b) => {
+        const keyA = a.year * 100 + a.month
+        const keyB = b.year * 100 + b.month
+        return keyB - keyA
+      })
     } else {
       throw new Error()
     }
